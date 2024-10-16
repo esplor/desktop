@@ -1,0 +1,10 @@
+--- config.def.h	2024-10-16 18:22:46.278309234 +0200
++++ config.h	2024-10-16 18:57:26.196477436 +0200
+@@ -65,5 +65,6 @@
+  */
+ static const struct arg args[] = {
+ 	/* function format          argument */
+-	{ datetime, "%s",           "%F %T" },
++	{ datetime, 	"%s",           "%d.%m.%y %H:%M U:%W" 	},
++	{ battery_perc, " B:%s%%",	"BAT0"				},
+ };
