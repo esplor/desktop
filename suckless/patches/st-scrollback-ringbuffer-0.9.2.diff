@@ -1,18 +1,23 @@
+commit 0663bdf11a409961da5b1120741a69814da8ce65
+Author: Timo Röhling <timo@gaussglocke.de>
+Date:   Tue Nov 23 19:45:33 2021 +0100
+
+    Terminal scrollback with ring buffer
+    
+    This patch adds a ring buffer for scrollback to the terminal.  The
+    advantage of using a ring buffer is that the common case, scrolling with
+    no static screen content, can be achieved very efficiently by
+    incrementing and decrementing the starting line (modulo buffer size).
+    
+    The scrollback buffer is limited to HISTSIZE lines in order to bound
+    memory usage. As the lines are allocated on demand, it is possible to
+    implement unlimited scrollback with few changes.  If the terminal is
+    reset, the scroll back buffer is reset, too.
+
 diff --git a/config.def.h b/config.def.h
-index 2cd740a..71a1559 100644
+index 2cd740a..8b25d40 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -5,8 +5,8 @@
-  *
-  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
-  */
--static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
--static int borderpx = 2;
-+static char *font = "Fira Code Retina:pixelsize=14:antialias=true:autohint=true";
-+static int borderpx = 0;
- 
- /*
-  * What program is execed by st depends of these precedence rules:
 @@ -201,6 +201,8 @@ static Shortcut shortcuts[] = {
  	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
  	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
@@ -23,7 +28,7 @@ index 2cd740a..71a1559 100644
  
  /*
 diff --git a/st.c b/st.c
-index 57c6e96..a3b3c9d 100644
+index b9f66e7..d9b163e 100644
 --- a/st.c
 +++ b/st.c
 @@ -43,6 +43,10 @@
@@ -376,7 +381,7 @@ index 57c6e96..a3b3c9d 100644
  	selscroll(orig, -n);
  }
  
-@@ -1197,6 +1287,7 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
+@@ -1194,6 +1284,7 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
  		"⎻", "─", "⎼", "⎽", "├", "┤", "┴", "┬", /* p - w */
  		"│", "≤", "≥", "π", "≠", "£", "·", /* x - ~ */
  	};
@@ -384,7 +389,7 @@ index 57c6e96..a3b3c9d 100644
  
  	/*
  	 * The table is proudly stolen from rxvt.
-@@ -1205,25 +1296,25 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
+@@ -1202,25 +1293,25 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
  	   BETWEEN(u, 0x41, 0x7e) && vt100_0[u - 0x41])
  		utf8decode(vt100_0[u - 0x41], &u, UTF_SIZ);
  
@@ -419,7 +424,7 @@ index 57c6e96..a3b3c9d 100644
  	Glyph *gp;
  
  	if (x1 > x2)
-@@ -1231,15 +1322,16 @@ tclearregion(int x1, int y1, int x2, int y2)
+@@ -1228,15 +1319,16 @@ tclearregion(int x1, int y1, int x2, int y2)
  	if (y1 > y2)
  		temp = y1, y1 = y2, y2 = temp;
  
@@ -439,7 +444,7 @@ index 57c6e96..a3b3c9d 100644
  			if (selected(x, y))
  				selclear();
  			gp->fg = term.c.attr.fg;
-@@ -1247,6 +1339,7 @@ tclearregion(int x1, int y1, int x2, int y2)
+@@ -1244,6 +1336,7 @@ tclearregion(int x1, int y1, int x2, int y2)
  			gp->mode = 0;
  			gp->u = ' ';
  		}
@@ -447,7 +452,7 @@ index 57c6e96..a3b3c9d 100644
  	}
  }
  
-@@ -1261,7 +1354,7 @@ tdeletechar(int n)
+@@ -1258,7 +1351,7 @@ tdeletechar(int n)
  	dst = term.c.x;
  	src = term.c.x + n;
  	size = term.col - src;
@@ -456,7 +461,7 @@ index 57c6e96..a3b3c9d 100644
  
  	memmove(&line[dst], &line[src], size * sizeof(Glyph));
  	tclearregion(term.col-n, term.c.y, term.col-1, term.c.y);
-@@ -1278,7 +1371,7 @@ tinsertblank(int n)
+@@ -1275,7 +1368,7 @@ tinsertblank(int n)
  	dst = term.c.x + n;
  	src = term.c.x;
  	size = term.col - dst;
@@ -465,7 +470,7 @@ index 57c6e96..a3b3c9d 100644
  
  	memmove(&line[dst], &line[src], size * sizeof(Glyph));
  	tclearregion(src, term.c.y, dst - 1, term.c.y);
-@@ -2082,7 +2175,7 @@ tdumpline(int n)
+@@ -2079,7 +2172,7 @@ tdumpline(int n)
  	char buf[UTF_SIZ];
  	const Glyph *bp, *end;
  
@@ -474,7 +479,7 @@ index 57c6e96..a3b3c9d 100644
  	end = &bp[MIN(tlinelen(n), term.col) - 1];
  	if (bp != end || bp->u != ' ') {
  		for ( ; bp <= end; ++bp)
-@@ -2469,11 +2562,11 @@ check_control_code:
+@@ -2466,11 +2559,11 @@ check_control_code:
  	if (selected(term.c.x, term.c.y))
  		selclear();
  
@@ -488,7 +493,7 @@ index 57c6e96..a3b3c9d 100644
  	}
  
  	if (IS_SET(MODE_INSERT) && term.c.x+width < term.col) {
-@@ -2486,7 +2579,7 @@ check_control_code:
+@@ -2483,7 +2576,7 @@ check_control_code:
  			tnewline(1);
  		else
  			tmoveto(term.col - width, term.c.y);
@@ -497,7 +502,7 @@ index 57c6e96..a3b3c9d 100644
  	}
  
  	tsetchar(u, &term.c.attr, term.c.x, term.c.y);
-@@ -2517,6 +2610,11 @@ twrite(const char *buf, int buflen, int show_ctrl)
+@@ -2514,6 +2607,11 @@ twrite(const char *buf, int buflen, int show_ctrl)
  	Rune u;
  	int n;
  
@@ -509,7 +514,7 @@ index 57c6e96..a3b3c9d 100644
  	for (n = 0; n < buflen; n += charsize) {
  		if (IS_SET(MODE_UTF8)) {
  			/* process a complete utf8 char */
-@@ -2543,56 +2641,85 @@ twrite(const char *buf, int buflen, int show_ctrl)
+@@ -2540,56 +2638,85 @@ twrite(const char *buf, int buflen, int show_ctrl)
  }
  
  void
@@ -626,7 +631,7 @@ index 57c6e96..a3b3c9d 100644
  	if (col > term.col) {
  		bp = term.tabs + term.col;
  
-@@ -2602,26 +2729,16 @@ tresize(int col, int row)
+@@ -2599,26 +2726,16 @@ tresize(int col, int row)
  		for (bp += tabspaces; bp < term.tabs + col; bp += tabspaces)
  			*bp = 1;
  	}
@@ -656,7 +661,7 @@ index 57c6e96..a3b3c9d 100644
  }
  
  void
-@@ -2633,14 +2750,15 @@ resettitle(void)
+@@ -2630,14 +2747,15 @@ resettitle(void)
  void
  drawregion(int x1, int y1, int x2, int y2)
  {
@@ -678,7 +683,7 @@ index 57c6e96..a3b3c9d 100644
  	}
  }
  
-@@ -2655,14 +2773,15 @@ draw(void)
+@@ -2652,14 +2770,15 @@ draw(void)
  	/* adjust cursor position */
  	LIMIT(term.ocx, 0, term.col-1);
  	LIMIT(term.ocy, 0, term.row-1);
@@ -711,7 +716,7 @@ index fd3b0d8..3cea73b 100644
  enum glyph_attribute {
  	ATTR_NULL       = 0,
 diff --git a/x.c b/x.c
-index d73152b..1e4bdf5 100644
+index bd23686..25785a6 100644
 --- a/x.c
 +++ b/x.c
 @@ -59,6 +59,8 @@ static void zoom(const Arg *);
