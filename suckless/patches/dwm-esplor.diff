@@ -1,5 +1,5 @@
 diff --git a/config.def.h b/config.def.h
-index 9efa774..314984d 100644
+index 9efa774..a674698 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -5,8 +5,8 @@ static const unsigned int borderpx  = 1;        /* border pixel of windows */
@@ -13,26 +13,30 @@ index 9efa774..314984d 100644
  static const char col_gray1[]       = "#222222";
  static const char col_gray2[]       = "#444444";
  static const char col_gray3[]       = "#bbbbbb";
-@@ -45,7 +45,7 @@ static const Layout layouts[] = {
+@@ -26,9 +26,9 @@ static const Rule rules[] = {
+ 	 *	WM_CLASS(STRING) = instance, class
+ 	 *	WM_NAME(STRING) = title
+ 	 */
+-	/* class      instance    title       tags mask     isfloating   monitor */
+-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
++	/* class            instance    title       tags mask     isfloating   monitor */
++	{ "Gimp",           NULL,       NULL,       0,            1,           -1 },
++	{ "firefox-esr",    NULL,       NULL,       1 << 8,       0,           -1 },
  };
  
- /* key definitions */
--#define MODKEY Mod1Mask
-+#define MODKEY Mod4Mask
- #define TAGKEYS(KEY,TAG) \
- 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
- 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+ /* layout(s) */
 @@ -59,11 +59,13 @@ static const Layout layouts[] = {
  static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
  static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
  static const char *termcmd[]  = { "st", NULL };
-+static const char *browser[]  = { "google-chrome", NULL };
++static const char *browser[]  = { "firefox-esr", NULL };
  
  static const Key keys[] = {
  	/* modifier                     key        function        argument */
  	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 -	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-+	{ MODKEY,             		XK_Return, spawn,          {.v = termcmd } },
++	{ MODKEY,             		    XK_Return, spawn,          {.v = termcmd } },
 +	{ MODKEY|ShiftMask,             XK_b,      spawn,          {.v = browser } },
  	{ MODKEY,                       XK_b,      togglebar,      {0} },
  	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -42,7 +46,7 @@ index 9efa774..314984d 100644
  	{ MODKEY,                       XK_Return, zoom,           {0} },
  	{ MODKEY,                       XK_Tab,    view,           {0} },
 -	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-+	{ MODKEY,             		XK_BackSpace,      killclient,     {0} },
++	{ MODKEY,             		    XK_BackSpace,      killclient,     {0} },
  	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
  	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
  	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
