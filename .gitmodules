@@ -16,4 +16,4 @@
 	branch = master
 [submodule "suckless/slock"]
 	path = suckless/slock
-	url = git://git.suckless.org/slock
+	url = https://git.suckless.org/slock
