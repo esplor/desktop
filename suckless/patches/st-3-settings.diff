@@ -1,0 +1,25 @@
+diff --git a/config.def.h b/config.def.h
+index 4fe287e..9a33b02 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -5,8 +5,9 @@
+  *
+  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
+  */
+-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
+-static int borderpx = 2;
++
++static char *font = "FiraCode Nerd Font Mono:pixelsize=14:antialias=true:autohint=true";
++static int borderpx = 0;
+ 
+ /*
+  * What program is execed by st depends of these precedence rules:
+@@ -94,7 +95,7 @@ char *termname = "st-256color";
+ unsigned int tabspaces = 8;
+ 
+ /* bg opacity */
+-float alpha = 0.8;
++float alpha = 0.7;
+ 
+ /*
+  * Select preferred colorscheme below (Only one include)
