@@ -1,3 +1,4 @@
-sudo apt install build-essential pkg-config libglib2.0-dev libpipewire-0.3-dev libclang-dev libudev-dev libseat-dev libpango1.0-dev libdisplay-info-dev libinput-dev libxkbcommon-dev libgbm-dev
+sudo apt install --yes cargo libglib2.0-dev libpipewire-0.3-dev libudev-dev libseat-dev libcairo2-dev libpangomm-1.4-dev libdisplay-info-dev libinput-dev libxkbcommon-dev libgbm-dev
+git clone --recurse-submodules https://github.com/yalter/niri && cd niri
 cargo build --release
-git clone https://github.com/yalter/niri
+mkdir -p ~/.local/bin
