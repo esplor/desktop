@@ -1,4 +1,4 @@
-sudo apt install --yes cargo libglib2.0-dev libpipewire-0.3-dev libudev-dev libseat-dev libcairo2-dev libpangomm-1.4-dev libdisplay-info-dev libinput-dev libxkbcommon-dev libgbm-dev
-git clone --recurse-submodules https://github.com/yalter/niri && cd niri
-cargo build --release
+sudo apt install libglib2.0-dev libwayland-dev libpipewire-0.3-dev libudev-dev libseat-dev libcairo2-dev libpangomm-1.4-dev libdisplay-info-dev libinput-dev libxkbcommon-dev libgbm-dev libegl1-mesa-dev cargo alacritty
+cd niri && cargo build --release
 mkdir -p ~/.local/bin
+cp target/release/niri ~/.local/bin/
