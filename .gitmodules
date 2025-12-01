@@ -20,3 +20,6 @@
 [submodule "niri"]
 	path = niri
 	url = https://github.com/yalter/niri.git
+[submodule "mpvpaper"]
+	path = mpvpaper
+	url = https://github.com/GhostNaN/mpvpaper.git
