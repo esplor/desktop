@@ -23,3 +23,6 @@
 [submodule "mpvpaper"]
 	path = mpvpaper
 	url = https://github.com/GhostNaN/mpvpaper.git
+[submodule "xwayland-satellite"]
+	path = xwayland-satellite
+	url = https://github.com/Supreeeme/xwayland-satellite.git
