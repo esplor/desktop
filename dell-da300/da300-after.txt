@@ -1,0 +1,75 @@
+
+=== kernel / date ===
+7.0.4+deb13-amd64
+2026-05-15T18:10:19+02:00
+
+=== port0-partner/number_of_alternate_modes (key signal: >=1 means DP alt mode discovered) ===
+0
+
+=== ls /sys/class/typec/port0-partner/ (identity/ dir = Discover Identity ran) ===
+accessory_mode
+device
+number_of_alternate_modes
+pd2
+power
+subsystem
+supports_usb_power_delivery
+uevent
+usb_power_delivery
+usb_power_delivery_revision
+
+=== alt-mode subdirs (port0-partner.N) ===
+none
+
+=== DRM DP connector status ===
+/sys/class/drm/card0-DP-1/status: disconnected
+/sys/class/drm/card0-DP-2/status: disconnected
+
+=== port0 basics ===
+usb_typec_revision: 1.0
+power_role: [source] sink
+data_role: [host] device
+
+=== port0-partner basics ===
+usb_power_delivery_revision: 1.0
+supports_usb_power_delivery: yes
+
+=== loaded typec / ucsi / dp modules ===
+ucsi_acpi              12288  0
+typec_ucsi             77824  1 ucsi_acpi
+typec                 131072  1 typec_ucsi
+roles                  16384  1 typec_ucsi
+thunderbolt           573440  1 typec
+usb_common             20480  4 xhci_hcd,usbcore,uvcvideo,typec_ucsi
+
+=== dmesg: typec / ucsi / alt-mode / displayport (last 60) ===
+[    0.004413] ACPI: SSDT 0x00000000CA08A000 00072B (v01 LENOVO UsbCUcsi 00000001 INTL 20180313)
+
+=== niri outputs ===
+Output "Lenovo Group Limited 0x8A97 Unknown" (eDP-1)
+  Current mode: 2560x1600 @ 60.001 Hz (preferred)
+  Variable refresh rate: supported, disabled
+  Physical size: 340x220 mm
+  Logical position: 0, 0
+  Logical size: 2048x1280
+  Scale: 1.25
+  Transform: normal
+  Available modes:
+    2560x1600@60.001 (current, preferred)
+    1920x1200@60.001
+    1920x1080@60.001
+    1600x1200@60.001
+    1680x1050@60.001
+    1280x1024@60.001
+    1440x900@60.001
+    1280x800@60.001
+    1280x720@60.001
+    1024x768@60.001
+    800x600@60.001
+    640x480@60.001
+
+
+=== DA300 USB presence (06c4:c412) ===
+Bus 001 Device 005: ID 06c4:c412 Bizlink International Corp. DELL DA300
+
+=== done ===
